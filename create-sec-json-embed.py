@@ -17,8 +17,9 @@ def create_ensemble_json(
 ) -> str:
     """Creates a JSON string for a CarlBot embed representing an ensemble advertisement."""
 
-    musicians_needed_text = "\n".join(f"- {part}" for part in musicians_needed)
-    current_musicians_text = "\n".join(f"- {part} {name}" for part, name in current_musicians)
+    musicians_needed_text = "\n".join(f"- {part}: **_NEEDED_**" for part in musicians_needed)
+    current_musicians_text = "\n".join(f"- {part}: {name}" for part, name in current_musicians)
+
 
     tracks_text = f"\n- Original: {original_track}"
     if other_tracks:
@@ -27,13 +28,8 @@ def create_ensemble_json(
     embed_dict = {
         "fields": [
             {
-                "name": "Musicians Needed",
-                "value": musicians_needed_text,
-                "inline": False
-            },
-            {
-                "name": "Current Musicians",
-                "value": current_musicians_text,
+                "name": "Musicians",
+                "value": current_musicians_text + musicians_needed_text,
                 "inline": False
             },
             {
@@ -49,7 +45,7 @@ def create_ensemble_json(
         "author": {
             "name": "Small Ensemble"
         },
-        "description": f"Run by <@!{user_id}>",
+        "description": f"Run by @{user_id}",
         "color": 16733952
     }
 
@@ -133,7 +129,7 @@ def main():
             if other_tracks:
                 config['other_tracks'] = other_tracks.split(',')
 
-            config['user_id'] = input("Discord user ID (or enter for default): ") or "userID"
+            config['user_id'] = input("Discord @ handle: ") or "userID"
             config['thumbnail_url'] = input("Thumbnail URL (or enter for default): ") or None
         else:
             # Reading from pipe
