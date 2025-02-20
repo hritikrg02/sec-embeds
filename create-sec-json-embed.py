@@ -2,7 +2,33 @@ import json
 import argparse
 import sys
 from typing import List, Optional, Dict
-import yaml  # For reading YAML config files
+import yaml
+import csv
+from pathlib import Path
+
+
+def parse_musicians_string(musicians_str: str) -> List[tuple[str, str]]:
+    """Parse a string of format 'instrument1:name1; instrument2:name2' into list of tuples"""
+    if not musicians_str or musicians_str.isspace():
+        return []
+
+    musicians = []
+    pairs = musicians_str.split(';')
+    for pair in pairs:
+        pair = pair.strip()
+        if pair:
+            if ':' in pair:
+                part, name = pair.split(':', 1)
+                musicians.append((part.strip(), name.strip()))
+    return musicians
+
+
+def parse_needed_instruments(instruments_str: str) -> List[str]:
+    """Parse a string of format 'instrument1; instrument2' into list of strings"""
+    if not instruments_str or instruments_str.isspace():
+        return []
+
+    return [instr.strip() for instr in instruments_str.split(';') if instr.strip()]
 
 
 def create_ensemble_json(
@@ -17,9 +43,14 @@ def create_ensemble_json(
 ) -> str:
     """Creates a JSON string for a CarlBot embed representing an ensemble advertisement."""
 
-    musicians_needed_text = "\n".join(f"- {part}: **_NEEDED_**" for part in musicians_needed)
     current_musicians_text = "\n".join(f"- {part}: {name}" for part, name in current_musicians)
+    musicians_needed_text = "\n".join(f"- {part}: **_NEEDED_**" for part in musicians_needed)
 
+    # Only add newline between sections if both exist
+    musicians_text = current_musicians_text
+    if current_musicians_text and musicians_needed_text:
+        musicians_text += "\n"
+    musicians_text += musicians_needed_text
 
     tracks_text = f"\n- Original: {original_track}"
     if other_tracks:
@@ -29,7 +60,7 @@ def create_ensemble_json(
         "fields": [
             {
                 "name": "Musicians",
-                "value": current_musicians_text + musicians_needed_text,
+                "value": musicians_text,
                 "inline": False
             },
             {
@@ -91,19 +122,64 @@ def process_config(config: Dict) -> Dict:
     return config
 
 
+def process_csv(file_path: str, output_dir: Optional[str] = None) -> None:
+    """Process a CSV file and generate JSON for each row"""
+    with open(file_path, 'r', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        # Create output directory if specified
+        if output_dir:
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+        for i, row in enumerate(reader, 1):
+            # Process the row data
+            config = {
+                'song_title': row['Song name'].strip(),
+                'game': row['Game'].strip(),
+                'original_track': row['OST links'].strip(),
+                'user_id': row['Ensemble Lead'].strip() if row['Ensemble Lead'].strip() else "userID",
+                'current_musicians': parse_musicians_string(row['Current instruments + members']),
+                'musicians_needed': parse_needed_instruments(row['Needed Instruments']),
+                'other_tracks': None,  # Could be added as additional column if needed
+                'thumbnail_url': None  # Could be added as additional column if needed
+            }
+
+            # Generate JSON
+            json_str = create_ensemble_json(**config)
+
+            # Determine output
+            if output_dir:
+                # Create filename from song name (sanitized) and index
+                safe_name = "".join(c for c in config['song_title'] if c.isalnum() or c in (' ', '-', '_')).strip()
+                safe_name = safe_name.replace(' ', '_')
+                filename = f"{i:03d}_{safe_name}.json"
+                output_path = Path(output_dir) / filename
+
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(json_str)
+                print(f"Generated JSON for '{config['song_title']}' -> {filename}")
+            else:
+                print(f"\n--- Ensemble {i}: {config['song_title']} ---")
+                print(json_str)
+                print("\n" + "=" * 50)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Generate JSON for CarlBot ensemble embed')
 
     # Add arguments
     parser.add_argument('-f', '--file', help='Path to config file (YAML or text)')
     parser.add_argument('-i', '--interactive', action='store_true', help='Run in interactive mode')
-    parser.add_argument('-c', '--compact', action='store_true', help='Output compact JSON')
+    parser.add_argument('-o', '--output-dir', help='Directory to save JSON files (for CSV input)')
 
     args = parser.parse_args()
 
     config = {}
 
-    if args.file:
+    if args.file and args.file.lower().endswith('.csv'):
+        process_csv(args.file, args.output_dir)
+        return
+    elif args.file:
         # Read from file
         config = parse_config_file(args.file)
         config = process_config(config)
@@ -142,10 +218,7 @@ def main():
     json_str = create_ensemble_json(**config)
 
     # Output
-    if args.compact:
-        print(json.dumps(json.loads(json_str), separators=(',', ':')))
-    else:
-        print(json_str)
+    print(json_str)
 
 
 if __name__ == "__main__":
