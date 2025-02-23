@@ -124,7 +124,7 @@ def process_config(config: Dict) -> Dict:
 
 def process_csv(file_path: str, output_dir: Optional[str] = None) -> None:
     """Process a CSV file and generate JSON for each row"""
-    with open(file_path, 'r', encoding='utf-8') as csvfile:
+    with open(file_path, 'r', encoding='latin-1') as csvfile:
         reader = csv.DictReader(csvfile)
 
         # Create output directory if specified
