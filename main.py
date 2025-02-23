@@ -54,8 +54,10 @@ async def create_embed(ctx: discord.ext.commands.Context):
     config["song_title"] = await get_response("Enter song name:")
     config["game"] = await get_response("Enter game name:")
 
-    musicians_needed = await get_response("Musicians needed (comma-separated): ")
-    config["musicians_needed"] = [m.strip() for m in musicians_needed.split(",")]
+    config["musicians_needed"] = []
+    musicians_needed = await get_response("Musicians needed (comma-separated, or type skip): ")
+    if musicians_needed.lower() != 'skip':
+        config["musicians_needed"] = [m.strip() for m in musicians_needed.split(",")]
 
     await ctx.send("Now let's add current musicians. Type 'done' when finished adding musicians.")
     current_musicians: List[Tuple[str, str]] = []
