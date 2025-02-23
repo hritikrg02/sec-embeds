@@ -26,12 +26,13 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix='$', intents=intents)
+bot = commands.Bot(command_prefix="$", intents=intents)
 
 
 @bot.event
 async def on_ready():
     logger.success(f"Log on successful as {bot.user}.")
+
 
 @bot.command(name="create")
 async def create_embed(ctx: discord.ext.commands.Context):
@@ -42,30 +43,35 @@ async def create_embed(ctx: discord.ext.commands.Context):
     #     return
 
     config = {}
+
     async def get_response(question: str, timeout: int = 60):
         await ctx.send(question)
 
         def check(message):
             return message.author == ctx.author and message.channel == ctx.channel
 
-        response = await bot.wait_for('message', timeout=timeout, check=check)
+        response = await bot.wait_for("message", timeout=timeout, check=check)
         return response.content  # TODO some error handling
 
     config["song_title"] = await get_response("Enter song name:")
     config["game"] = await get_response("Enter game name:")
 
     config["musicians_needed"] = []
-    musicians_needed = await get_response("Musicians needed (comma-separated, or type skip): ")
-    if musicians_needed.lower() != 'skip':
+    musicians_needed = await get_response(
+        "Musicians needed (comma-separated, or type skip): "
+    )
+    if musicians_needed.lower() != "skip":
         config["musicians_needed"] = [m.strip() for m in musicians_needed.split(",")]
 
-    await ctx.send("Now let's add current musicians. Type 'done' when finished adding musicians.")
+    await ctx.send(
+        "Now let's add current musicians. Type 'done' when finished adding musicians."
+    )
     current_musicians: List[Tuple[str, str]] = []
     while True:
         part = await get_response("Current musician part (or 'done' to finish): ")
         if part is None:
             return
-        if part.lower() == 'done':
+        if part.lower() == "done":
             break
 
         name = await get_response("Current musician name: ")
@@ -77,13 +83,17 @@ async def create_embed(ctx: discord.ext.commands.Context):
     config["current_musicians"] = current_musicians
 
     config["original_track"] = await get_response("Enter original track link: ")
-    other_tracks = await get_response("Enter track track links (comma-separated, or type 'skip' to skip): ")
-    if other_tracks.lower() != 'skip':
+    other_tracks = await get_response(
+        "Enter track track links (comma-separated, or type 'skip' to skip): "
+    )
+    if other_tracks.lower() != "skip":
         config["other_tracks"] = [t.strip() for t in other_tracks.split(",")]
 
     config["user_id"] = str(ctx.author.name)
 
-    config["thumbnail_url"] = await get_response("Enter URL for image included in embed: ")
+    config["thumbnail_url"] = await get_response(
+        "Enter URL for image included in embed: "
+    )
 
     logger.info("info obtained successfully, creating embed")
 
@@ -106,7 +116,10 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
     # generate embed
 
-    embed = discord.Embed(title=f'{config["song_title"]} ~ {config["game"]}', color=discord.Color(16733952))
+    embed = discord.Embed(
+        title=f'{config["song_title"]} ~ {config["game"]}',
+        color=discord.Color(16733952),
+    )
     embed.add_field(name="Musicians", value=musicians_text, inline=False)
     embed.add_field(name="Tracks", value=tracks_text, inline=False)
     embed.set_thumbnail(url=config["thumbnail_url"])
@@ -117,5 +130,6 @@ async def create_embed(ctx: discord.ext.commands.Context):
     logger.info("sending embed")
     await ctx.send("Here's the collected ensemble information:", embed=embed)
     logger.info("embed sent successfully")
+
 
 bot.run(TOKEN)

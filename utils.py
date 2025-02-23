@@ -21,6 +21,7 @@ def get_token(token_file):
     logger.success("Token successfully parsed.")
     return token
 
+
 def create_ensemble_json(
     song_title: str,
     game: str,
