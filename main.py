@@ -17,7 +17,7 @@ TOKEN_FILE = "token.txt"
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"
-CHANNEL_TO_SEND = "#sec-resources"
+CHANNEL_TO_SEND = "#general"
 CREATE_EMBED_COMMAND = f"!cembed {CHANNEL_TO_SEND}"
 
 # discord stuff
@@ -85,8 +85,37 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
     config["thumbnail_url"] = await get_response("Enter URL for image included in embed: ")
 
-    logger.info("info obtained successfully, creating embed JSON")
-    json_str = create_ensemble_json(**config)
-    await ctx.send(json_str)
+    logger.info("info obtained successfully, creating embed")
+
+    # format embed info
+    current_musicians_text = "\n".join(
+        f"- {part}: {name}" for part, name in config["current_musicians"]
+    )
+    musicians_needed_text = "\n".join(
+        f"- {part}: **_NEEDED_**" for part in config["musicians_needed"]
+    )
+    # only add newline between sections if both exist
+    musicians_text = current_musicians_text
+    if current_musicians_text and musicians_needed_text:
+        musicians_text += "\n"
+    musicians_text += musicians_needed_text
+
+    tracks_text = f'\n- Original: {config["original_track"]}'
+    if config["other_tracks"]:
+        tracks_text += "\n- " + "\n- ".join(other_tracks)
+
+    # generate embed
+
+    embed = discord.Embed(title=f'{config["song_title"]} ~ {config["game"]}', color=discord.Color(16733952))
+    embed.add_field(name="Musicians", value=musicians_text, inline=False)
+    embed.add_field(name="Tracks", value=tracks_text, inline=False)
+    embed.set_thumbnail(url=config["thumbnail_url"])
+    embed.set_author(name="Small Ensemble")
+    embed.description = f'Run by {config["user_id"]}'
+    logger.info("embed created successfully")
+
+    logger.info("sending embed")
+    await ctx.send("Here's the collected ensemble information:", embed=embed)
+    logger.info("embed sent successully")
 
 bot.run(TOKEN)
