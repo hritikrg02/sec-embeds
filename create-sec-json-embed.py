@@ -10,6 +10,8 @@ import yaml
 import csv
 from pathlib import Path
 
+from utils import create_ensemble_json
+
 
 def parse_musicians_string(musicians_str: str) -> List[tuple[str, str]]:
     """Parse a string of format 'instrument1:name1; instrument2:name2' into list of tuples"""
@@ -33,50 +35,6 @@ def parse_needed_instruments(instruments_str: str) -> List[str]:
         return []
 
     return [instr.strip() for instr in instruments_str.split(";") if instr.strip()]
-
-
-def create_ensemble_json(
-    song_title: str,
-    game: str,
-    musicians_needed: List[str],
-    current_musicians: List[tuple[str, str]],
-    original_track: str,
-    other_tracks: Optional[List[str]] = None,
-    thumbnail_url: str = "https://png.pngtree.com/png-clipart/20210129/ourmid/pngtree-default-male-avatar-png-image_2811083.jpg",
-    user_id: str = "userID",
-) -> str:
-    """Creates a JSON string for a CarlBot embed representing an ensemble advertisement."""
-
-    current_musicians_text = "\n".join(
-        f"- {part}: {name}" for part, name in current_musicians
-    )
-    musicians_needed_text = "\n".join(
-        f"- {part}: **_NEEDED_**" for part in musicians_needed
-    )
-
-    # Only add newline between sections if both exist
-    musicians_text = current_musicians_text
-    if current_musicians_text and musicians_needed_text:
-        musicians_text += "\n"
-    musicians_text += musicians_needed_text
-
-    tracks_text = f"\n- Original: {original_track}"
-    if other_tracks:
-        tracks_text += "\n- " + "\n- ".join(other_tracks)
-
-    embed_dict = {
-        "fields": [
-            {"name": "Musicians", "value": musicians_text, "inline": False},
-            {"name": "Tracks", "value": tracks_text, "inline": False},
-        ],
-        "title": f"{song_title} ~ {game}",
-        "thumbnail": {"url": thumbnail_url},
-        "author": {"name": "Small Ensemble"},
-        "description": f"Run by @{user_id}",
-        "color": 16733952,
-    }
-
-    return json.dumps(embed_dict, indent=4)
 
 
 def parse_config_file(file_path: str) -> Dict:
