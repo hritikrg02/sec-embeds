@@ -8,6 +8,7 @@ import discord
 from typing import List, Tuple
 from discord.ext import commands
 from loguru import logger
+from setuptools.command.setopt import config_file
 
 from utils import get_token, create_ensemble_json
 
@@ -83,6 +84,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
     config["current_musicians"] = current_musicians
 
     config["original_track"] = await get_response("Enter original track link: ")
+    config["other_tracks"] = []
     other_tracks = await get_response(
         "Enter track track links (comma-separated, or type 'skip' to skip): "
     )
@@ -128,7 +130,8 @@ async def create_embed(ctx: discord.ext.commands.Context):
     logger.info("embed created successfully")
 
     logger.info("sending embed")
-    await ctx.send("Here's the collected ensemble information:", embed=embed)
+    channel = bot.get_channel(1343293435901251624)
+    await channel.send(embed=embed)
     logger.info("embed sent successfully")
 
 
