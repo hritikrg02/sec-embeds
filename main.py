@@ -89,7 +89,10 @@ async def create_embed(ctx: discord.ext.commands.Context):
     if other_tracks.lower() != "skip":
         config["other_tracks"] = [t.strip() for t in other_tracks.split(",")]
 
-    config["user_id"] = str(ctx.author.name)
+
+    config["user_id"] = await get_response("Enter the username of the person running the ensemble, or type 'use mine' to use the username of the person filling out the details currently: ")
+    if config["user_id"] == "use mine":
+        config["user_id"] = str(ctx.author.name)
 
     config["thumbnail_url"] = await get_response(
         "Enter URL for image included in embed: "
