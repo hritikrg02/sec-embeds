@@ -116,6 +116,6 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
     logger.info("sending embed")
     await ctx.send("Here's the collected ensemble information:", embed=embed)
-    logger.info("embed sent successully")
+    logger.info("embed sent successfully")
 
 bot.run(TOKEN)
