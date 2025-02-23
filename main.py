@@ -111,7 +111,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
     embed.add_field(name="Tracks", value=tracks_text, inline=False)
     embed.set_thumbnail(url=config["thumbnail_url"])
     embed.set_author(name="Small Ensemble")
-    embed.description = f'Run by {config["user_id"]}'
+    embed.description = f'Run by @{config["user_id"]}'
     logger.info("embed created successfully")
 
     logger.info("sending embed")
