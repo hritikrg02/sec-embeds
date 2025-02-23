@@ -17,6 +17,8 @@ TOKEN_FILE = "token.txt"
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"
+CHANNEL_TO_SEND = "#sec-resources"
+CREATE_EMBED_COMMAND = f"!cembed {CHANNEL_TO_SEND}"
 
 # discord stuff
 
