@@ -9,7 +9,7 @@ from typing import List, Tuple
 from discord.ext import commands
 from loguru import logger
 
-from utils import get_token
+from utils import get_token, create_ensemble_json
 
 # constants
 
@@ -49,7 +49,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
         response = await bot.wait_for('message', timeout=timeout, check=check)
         return response.content  # TODO some error handling
 
-    config["song_name"] = await get_response("Enter song name:")
+    config["song_title"] = await get_response("Enter song name:")
     config["game"] = await get_response("Enter game name:")
 
     musicians_needed = await get_response("Musicians needed (comma-separated): ")
@@ -80,6 +80,9 @@ async def create_embed(ctx: discord.ext.commands.Context):
     config["user_id"] = str(ctx.author.name)
 
     config["thumbnail_url"] = await get_response("Enter URL for image included in embed: ")
-    await ctx.send(str(config))
+
+    logger.info("info obtained successfully, creating embed JSON")
+    json_str = create_ensemble_json(**config)
+    await ctx.send(json_str)
 
 bot.run(TOKEN)
