@@ -8,9 +8,8 @@ import discord
 from typing import List, Tuple
 from discord.ext import commands
 from loguru import logger
-from setuptools.command.setopt import config_file
 
-from utils import get_token, create_ensemble_json
+from utils import get_token
 
 # constants
 
@@ -18,8 +17,7 @@ TOKEN_FILE = "token.txt"
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"
-CHANNEL_TO_SEND = "#general"
-CREATE_EMBED_COMMAND = f"!cembed {CHANNEL_TO_SEND}"
+CHANNEL_TO_SEND = 1343293435901251624
 
 # discord stuff
 
@@ -130,7 +128,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
     logger.info("embed created successfully")
 
     logger.info("sending embed")
-    channel = bot.get_channel(1343293435901251624)
+    channel = bot.get_channel(CHANNEL_TO_SEND)
     await channel.send(embed=embed)
     logger.info("embed sent successfully")
 
