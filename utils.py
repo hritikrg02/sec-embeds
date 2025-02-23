@@ -4,6 +4,7 @@
 
 from loguru import logger
 
+
 def get_token(token_file):
     logger.info("Initiating token get.")
     try:
