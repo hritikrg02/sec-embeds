@@ -36,10 +36,10 @@ async def on_ready():
 async def create_embed(ctx: discord.ext.commands.Context):
     logger.info("create embed initiated")
 
-    # this should be commented in if added to a public server like GSO
-    # if ctx.author.top_role.name != CALLABLE_ROLE:
-    #     logger.warning(f"User {ctx.author} does not have role {CALLABLE_ROLE}.")
-    #     return
+    # comment out for testing so you don't have to deal with role nonsense
+    if ctx.author.top_role.name != CALLABLE_ROLE:
+        logger.warning(f"User {ctx.author} does not have role {CALLABLE_ROLE}.")
+        return
 
     config = {}
 
