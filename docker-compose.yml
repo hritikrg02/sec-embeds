@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  sec-embeds:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app/sec-embeds/
+    container_name: sec-embed-bot
+    volumes:
+      - ../sec-embeds:/app/sec-embeds/
