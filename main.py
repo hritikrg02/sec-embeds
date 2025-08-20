@@ -13,7 +13,9 @@ from utils import get_token
 
 # constants
 
-TOKEN_FILE = "token.txt"  # you'll need to place your own token in a file called token.txt
+TOKEN_FILE = (
+    "token.txt"  # you'll need to place your own token in a file called token.txt
+)
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"
@@ -62,7 +64,9 @@ async def create_embed(ctx: discord.ext.commands.Context):
             "Musicians needed, i.e that musicians you don't have yet (comma-separated, or type skip): "
         )
         if musicians_needed.lower() != "skip":
-            config["musicians_needed"] = [m.strip() for m in musicians_needed.split(",")]
+            config["musicians_needed"] = [
+                m.strip() for m in musicians_needed.split(",")
+            ]
 
         await ctx.send(
             "Now let's add current musicians. Type 'done' when finished adding musicians."
@@ -83,7 +87,9 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
         config["current_musicians"] = current_musicians
 
-        config["original_track"] = await get_response("Enter OST link(s) (comma-separated if there are multiple): ")
+        config["original_track"] = await get_response(
+            "Enter OST link(s) (comma-separated if there are multiple): "
+        )
         config["other_tracks"] = []
         other_tracks = await get_response(
             "Enter extra track links (comma-separated, or type 'skip' to skip): "
@@ -91,8 +97,9 @@ async def create_embed(ctx: discord.ext.commands.Context):
         if other_tracks.lower() != "skip":
             config["other_tracks"] = [t.strip() for t in other_tracks.split(",")]
 
-
-        config["user_id"] = await get_response("Enter the username of the person running the ensemble, or type 'use mine' to use the username of the person filling out the details currently: ")
+        config["user_id"] = await get_response(
+            "Enter the username of the person running the ensemble, or type 'use mine' to use the username of the person filling out the details currently: "
+        )
         if config["user_id"] == "use mine":
             config["user_id"] = str(ctx.author.name)
 
@@ -137,9 +144,9 @@ async def create_embed(ctx: discord.ext.commands.Context):
         await channel.send(embed=embed)
         logger.info("embed sent successfully")
 
-    except Exception: # TODO wayyy too broad
-        logger.error('error encountered while making embed')
-        logger.exception('')
+    except Exception:  # TODO wayyy too broad
+        logger.error("error encountered while making embed")
+        logger.exception("")
 
 
 bot.run(TOKEN)
