@@ -2,7 +2,6 @@
 # description:  contains the main implementation for the bot.
 # author:       Hritik "Ricky" Gupta | hritikrg02@gmail.com
 
-import asyncio
 import discord
 
 from typing import List, Tuple
