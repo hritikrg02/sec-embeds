@@ -37,6 +37,7 @@ async def on_ready():
 async def create_embed(ctx: discord.ext.commands.Context):
     logger.info("create embed initiated")
 
+    # this should be commented in if added to a public server like GSO
     # if ctx.author.top_role.name != CALLABLE_ROLE:
     #     logger.warning(f"User {ctx.author} does not have role {CALLABLE_ROLE}.")
     #     return
@@ -82,10 +83,10 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
         config["current_musicians"] = current_musicians
 
-        config["original_track"] = await get_response("Enter original track link: ")
+        config["original_track"] = await get_response("Enter OST link(s) (comma-separated if there are multiple): ")
         config["other_tracks"] = []
         other_tracks = await get_response(
-            "Enter track track links (comma-separated, or type 'skip' to skip): "
+            "Enter extra track links (comma-separated, or type 'skip' to skip): "
         )
         if other_tracks.lower() != "skip":
             config["other_tracks"] = [t.strip() for t in other_tracks.split(",")]
@@ -114,7 +115,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
             musicians_text += "\n"
         musicians_text += musicians_needed_text
 
-        tracks_text = f'\n- Original: {config["original_track"]}'
+        tracks_text = f'\n- Original(s): {config["original_track"]}'
         if config["other_tracks"]:
             tracks_text += "\n- " + "\n- ".join(other_tracks)
 
