@@ -13,7 +13,7 @@ from utils import get_token
 
 # constants
 
-TOKEN_FILE = "token.txt"
+TOKEN_FILE = "token.txt"  # you'll need to place your own token in a file called token.txt
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"

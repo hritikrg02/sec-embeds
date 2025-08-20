@@ -21,7 +21,7 @@ def get_token(token_file):
     logger.success("Token successfully parsed.")
     return token
 
-
+# this func can be deleted, it was mostly a POC iirc
 def create_ensemble_json(
     song_title: str,
     game: str,
