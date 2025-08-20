@@ -12,7 +12,7 @@ from utils import get_token
 
 # constants
 
-TOKEN_FILE = "token.txt"
+TOKEN_FILE = "bot_root/token.txt"
 TOKEN = get_token(TOKEN_FILE)
 
 CALLABLE_ROLE = "Eboard"
