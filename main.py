@@ -57,7 +57,7 @@ async def create_embed(ctx: discord.ext.commands.Context):
 
     config["musicians_needed"] = []
     musicians_needed = await get_response(
-        "Musicians needed (comma-separated, or type skip): "
+        "Musicians needed, i.e that musicians you don't have yet (comma-separated, or type skip): "
     )
     if musicians_needed.lower() != "skip":
         config["musicians_needed"] = [m.strip() for m in musicians_needed.split(",")]
