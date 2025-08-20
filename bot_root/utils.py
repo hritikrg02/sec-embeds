@@ -16,6 +16,7 @@ def get_token(token_file):
 
     except Exception:  # yes ik this is too broad, no I don't care enough to fix it
         logger.error("Issue when reading token file.")
+        logger.exception('')
         return
 
     logger.success("Token successfully parsed.")
